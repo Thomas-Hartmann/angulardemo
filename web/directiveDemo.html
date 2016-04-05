@@ -16,6 +16,8 @@
 <!--        <div my-new-dir=""></div>
         <div class="my-new-dir"></div>-->
         <!-- directive: my-new-dir -->
+        <div link-demo-dir="hi" test="hello from test" content="peter,paul,palle"></div>
+        <!--</link-demo-dir>-->
         <script>
             var app = angular.module('myApp', []);
             app.controller('myController', [function(){
@@ -29,6 +31,23 @@
                         templateUrl: 'pieces/person.html'
                     };
                     return output;
+            }]);
+            app.directive('linkDemoDir', [function(){
+                    return {
+                        restrict: 'EA',
+                        link: function(scope, element, attrs){
+                            //attrs parameter refers to collection of arguments used in the directive
+                            console.log(attrs.test);
+                            console.log(attrs.linkDemoDir)
+                            //element parameter refers to array of elements that uses this directive (if only one it will be on index 0.
+                            element[0].innerHTML = attrs.test;
+                            var attributeParts = attrs.content.split(',');
+                            for(var i = 0; i < attributeParts.length; i++){
+                                //In here you can create new html elements like <img> and append them to the element
+                                console.log(attributeParts[i]);
+                            }
+                        }
+                    };
             }]);
         
         </script>
