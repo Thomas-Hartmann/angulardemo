@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+
+-->
+<html ng-app="myApp">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    </head>
+    <body ng-controller="myCtrl as ctrl">
+        <input ng-model="ctrl.filterString">
+        <!--<div ng-repeat="item in ctrl.list | filter:{isMale: true, age: 3}">{{item.name}}</div>-->
+        <div ng-repeat="item in ctrl.list">{{item | myItemFilter:true}}</div>
+        <hr>
+        <div ng-repeat="item in ctrl.list | myArrayFilter">{{item}}</div>
+        
+        <script>
+            var app = angular.module('myApp', []);
+            app.controller('myCtrl', [function(){
+                    var self = this;
+                    self.list = [
+                        {name: 'Peter', age: 3, isMale: true},
+                        {name: 'Henrik', age: 3, isMale: true},
+                        {name: 'Ole', age: 10, isMale: true},
+                        {name: 'Hansine', age: 19, isMale: false},
+                        {name: 'Frederikke', age:28, isMale: false}
+                    ];
+                    self.filterString = '';
+            }]);
+            app.filter('myItemFilter', [function(){
+                    return function(inputItem, isMale){
+//                        if(inputItem.age < 15){
+//                            inputItem.isFiltered = true;
+//                            return inputItem;
+//                        }
+                            if(inputItem.isMale === isMale)
+                                return inputItem
+                    };
+            }]);
+            app.filter('myArrayFilter', [function(){
+                    return function(inputList){
+                        var output = [];
+                        angular.forEach(inputList, function(inputItem){
+                            if(inputItem.age > 15)
+                                output.push(inputItem);
+                        });
+                        return output;
+                    };
+            }]);
+        </script>
+    </body>
+</html>

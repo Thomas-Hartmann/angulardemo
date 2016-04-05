@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--
+
+-->
+<html ng-app="myApp">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <div ng-controller="myController as ctrl">
+            <input ng-model="ctrl.filterstring">
+            <ul>
+                <li ng-repeat="item in ctrl.list | filter:ctrl.filterstring">
+                    {{item}}
+                </li>
+            </ul>
+        </div>
+        <div ng-controller="filterCon as con">
+            <table>
+                <thead>
+                <tr>
+                    <th ng-click="con.orderBy('firstname')">First name</th>
+                    <th ng-click="con.orderBy('lastname')">Last name</th>
+                    <th ng-click="con.orderBy('age')">Age</th>
+                    <th ng-click="con.orderBy('isMale')">Gender</th>
+                </tr>
+                </thead>
+                <tbody>
+                    
+                <tr ng-repeat="person in con.list | removeUnderAge | orderBy:con.myListOrder">
+<!--                <tr ng-repeat="person in con.list | orderBy:con.myListOrder">-->
+                    <td>{{person.firstname}}</td>
+                    <td>{{person.lastname}}</td>
+                    <td>{{person.age}}</td>
+                    <td>{{person.isMale | genderFilter:person.isMale}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+        var app = angular.module('myApp', []);
+        app.controller('myController', ['serviceFactory', function(serviceFactory){
+                    var self = this;
+                    self.filterstring = '';
+                    self.list = serviceFactory.getList();
+            }]);
+        app.controller('filterCon', ['serviceFactory', function(serviceFactory){
+                var self = this;
+                self.list = serviceFactory.getObjects();
+                self.myListOrder = 'firstname';
+                self.orderBy = function(x){
+                    self.myListOrder = x;
+                };
+        }]);
+        app.factory('serviceFactory', [function(){
+                var list = ['Freddy Madsen', 'Tove Hansen', 'Dorthe Madsen', 'Christian Hansen'];
+                var objectList = [
+                    {firstname: 'Freddy', lastname: 'Madsen', age: 12, isMale: true},
+                    {firstname: 'Tove', lastname: 'Hansen', age: 19, isMale: false},
+                    {firstname: 'Dorthe', lastname: 'Madsen', age: 31, isMale: false},
+                    {firstname: 'Christian', lastname: 'Hansen', age: 87, isMale: true},
+                    {firstname: 'Dorith', lastname: 'Jensen', age: 3, isMale: false}
+                ];
+                var result = {};
+                result.getList = function(){
+                    return list;
+                };
+                result.getObjects = function(){
+                    return objectList;
+                };
+                result.orderBy = function(x){
+                    
+                };
+                return result;
+        }]);
+    app.filter('genderFilter', [function(){
+            return function(input){
+                if(input)
+                    return 'Mand';
+                return 'Kvinde';
+            };
+    }]);
+    app.filter('removeUnderAge', [function(){
+            return function(inputArray){
+                var list = [];
+                angular.forEach(inputArray, function(person){
+                    if(person.age >= 18)
+                        list.push(person);
+                });
+                return list;
+            };
+    }]);
+        </script>
+    </body>
+</html>
